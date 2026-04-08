@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÔN THI BÁO CÁO VIÊN – Đậu Quang Vũ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   RESET & VARIABLES
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Brand palette — deep navy + electric teal */
+  --ink:          #0b0f1e;
+  --ink-80:       rgba(11,15,30,.8);
+  --navy:         #111827;
+  --teal:         #00c2a8;
+  --teal-light:   #00e5c8;
+  --teal-glow:    rgba(0,194,168,.18);
+  --electric:     #4f8bff;
+  --electric-glow:rgba(79,139,255,.18);
+  --gold:         #f5a623;
+  --rose:         #ff5f7e;
+
+  /* Light-mode surfaces */
+  --surface-0:    #f5f7ff;
+  --surface-1:    #ffffff;
+  --surface-2:    #eef1fa;
+  --border:       rgba(79,139,255,.12);
+  --text:         #0b0f1e;
+  --text-2:       #4b5673;
+  --text-3:       #8892a4;
+  --card-bg:      rgba(255,255,255,.85);
+  --nav-bg:       rgba(245,247,255,.88);
+  --step-bg:      #f0f3ff;
+
+  /* Shadows */
+  --shadow-xs:    0 1px 4px rgba(11,15,30,.06);
+  --shadow-sm:    0 4px 20px rgba(11,15,30,.08);
+  --shadow-md:    0 12px 40px rgba(11,15,30,.12);
+  --shadow-lg:    0 24px 64px rgba(11,15,30,.16);
+  --shadow-teal:  0 8px 32px rgba(0,194,168,.28);
+  --shadow-elec:  0 8px 32px rgba(79,139,255,.28);
+
+  /* Misc */
+  --radius-sm:    10px;
+  --radius:       18px;
+  --radius-lg:    28px;
+  --transition:   .32s cubic-bezier(.4,0,.2,1);
+  --transition-bounce: .4s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --surface-0:    #08091a;
+  --surface-1:    #10152a;
+  --surface-2:    #161d35;
+  --border:       rgba(79,139,255,.15);
+  --text:         #e8edf8;
+  --text-2:       #94a3b8;
+  --text-3:       #5a6987;
+  --card-bg:      rgba(16,21,42,.9);
+  --nav-bg:       rgba(8,9,26,.88);
+  --step-bg:      #131829;
+  --shadow-sm:    0 4px 20px rgba(0,0,0,.3);
+  --shadow-md:    0 12px 40px rgba(0,0,0,.4);
+  --shadow-lg:    0 24px 64px rgba(0,0,0,.5);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--surface-0);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+  transition: opacity .7s ease, visibility .7s ease;
+}
+#loader.hide { opacity: 0; visibility: hidden; }
+
+.loader-brand {
+  display: flex; align-items: center; gap: 12px;
+  animation: loaderFadeIn .6s ease both;
+}
+.loader-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: var(--shadow-teal);
+}
+.loader-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: white; letter-spacing: -.3px;
+}
+.loader-name span { color: var(--teal); }
+
+.loader-bar-wrap {
+  width: 200px; height: 3px;
+  background: rgba(255,255,255,.1);
+  border-radius: 10px; overflow: hidden;
+  animation: loaderFadeIn .6s .2s ease both;
+}
+.loader-bar {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--teal), var(--electric));
+  border-radius: 10px;
+  animation: loaderProgress 1s .3s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes loaderProgress {
+  to { width: 100%; }
+}
+@keyframes loaderFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(20px, 5%, 80px);
+  background: var(--nav-bg);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid var(--border);
+  transition: all var(--transition);
+}
+nav.scrolled {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Logo */
+.nav-logo {
+  display: flex; align-items: center; gap: 11px;
+  text-decoration: none; flex-shrink: 0;
+}
+.logo-mark {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 16px rgba(0,194,168,.35);
+  transition: transform var(--transition-bounce);
+}
+.nav-logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
+.logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 16px;
+  color: var(--text); line-height: 1.1;
+}
+.logo-text small {
+  display: block;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 400; font-size: 11px;
+  color: var(--text-3); letter-spacing: .4px;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+  list-style: none;
+}
+.nav-links a {
+  text-decoration: none; color: var(--text-2);
+  font-size: 14px; font-weight: 500;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.nav-links a:hover { color: var(--teal); background: var(--teal-glow); }
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+
+/* Dark toggle */
+.dark-toggle {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; color: var(--text);
+  transition: all var(--transition);
+}
+.dark-toggle:hover {
+  background: var(--teal-glow);
+  border-color: var(--teal);
+  transform: rotate(15deg);
+}
+
+/* CTA button */
+.btn-cta {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 20px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  color: white; font-weight: 600; font-size: 14px;
+  text-decoration: none;
+  box-shadow: var(--shadow-teal);
+  transition: all var(--transition-bounce);
+}
+.btn-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0,194,168,.4);
+}
+
+/* Hamburger */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 8px;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all var(--transition);
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile nav */
+.mobile-nav {
+  position: fixed; inset: 0; z-index: 99;
+  background: var(--nav-bg);
+  backdrop-filter: blur(28px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+}
+.mobile-nav.open { opacity: 1; pointer-events: all; }
+.mobile-nav a {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--text); text-decoration: none;
+  padding: 10px 28px; border-radius: 14px;
+  transition: all var(--transition);
+}
+.mobile-nav a:hover { color: var(--teal); background: var(--teal-glow); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100svh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 120px 5% 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Mesh gradient background */
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,194,168,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(79,139,255,.16) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 60% 10%, rgba(245,166,35,.08) 0%, transparent 50%),
+    linear-gradient(160deg, #05070f 0%, #0b1025 50%, #0a1535 100%);
+}
+
+/* Animated grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(60px);
+  animation: orbFloat 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.orb-1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(0,194,168,.3), transparent 70%);
+  top: -80px; left: -80px;
+  animation-delay: 0s;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(79,139,255,.25), transparent 70%);
+  bottom: -60px; right: 5%;
+  animation-delay: -4s;
+}
+.orb-3 {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(245,166,35,.15), transparent 70%);
+  top: 35%; left: 60%;
+  animation-delay: -7s;
+}
+@keyframes orbFloat {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(20px,30px) scale(1.1); }
+}
+
+/* Hero content */
+.hero-content {
+  position: relative; z-index: 1;
+  text-align: center; max-width: 780px;
+}
+
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,194,168,.1);
+  border: 1px solid rgba(0,194,168,.25);
+  border-radius: 100px;
+  padding: 6px 16px; margin-bottom: 30px;
+  font-size: 12px; font-weight: 600;
+  color: var(--teal-light); letter-spacing: .8px; text-transform: uppercase;
+  animation: heroFade .8s ease both;
+}
+.pill-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal-light);
+  animation: blink 2s ease infinite;
+}
+@keyframes blink {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,229,200,.6); }
+  50%      { box-shadow: 0 0 0 6px rgba(0,229,200,0); }
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  font-weight: 700; line-height: 1.1;
+  color: white; margin-bottom: 22px;
+  letter-spacing: -1px;
+  animation: heroFade .8s .12s ease both;
+}
+.hero h1 .grad-text {
+  background: linear-gradient(90deg, var(--teal-light) 0%, #7dd3fc 50%, var(--electric) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: clamp(1rem, 2.2vw, 1.18rem);
+  color: rgba(255,255,255,.62);
+  line-height: 1.75; margin-bottom: 40px;
+  font-weight: 400; max-width: 560px; margin-left: auto; margin-right: auto;
+  animation: heroFade .8s .24s ease both;
+}
+.hero p strong { color: rgba(255,255,255,.9); font-weight: 600; }
+
+.hero-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; flex-wrap: wrap;
+  margin-bottom: 60px;
+  animation: heroFade .8s .36s ease both;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 14px 32px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--teal), #00a896);
+  color: white; font-weight: 700; font-size: 15px;
+  text-decoration: none;
+  box-shadow: var(--shadow-teal);
+  transition: all var(--transition-bounce);
+  border: none; cursor: pointer;
+}
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,194,168,.5);
+}
+.btn-primary svg { width: 18px; height: 18px; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 14px 28px; border-radius: 14px;
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(8px);
+  color: white; font-weight: 600; font-size: 15px;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.btn-outline:hover {
+  background: rgba(255,255,255,.14);
+  border-color: rgba(0,194,168,.5);
+  transform: translateY(-2px);
+}
+
+/* Stats */
+.hero-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(16px, 4vw, 40px);
+  animation: heroFade .8s .48s ease both;
+}
+.hstat {
+  text-align: center;
+}
+.hstat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 700; color: white; line-height: 1;
+}
+.hstat-num span { color: var(--teal-light); }
+.hstat-label {
+  font-size: 11px; color: rgba(255,255,255,.45);
+  letter-spacing: .5px; margin-top: 5px; text-transform: uppercase;
+}
+.hstat-divider {
+  width: 1px; height: 44px;
+  background: rgba(255,255,255,.1);
+}
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute; bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: rgba(255,255,255,.3); font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  animation: heroFade 1s .9s ease both;
+}
+.scroll-chevron {
+  width: 18px; height: 18px;
+  border-right: 1.5px solid rgba(255,255,255,.3);
+  border-bottom: 1.5px solid rgba(255,255,255,.3);
+  transform: rotate(45deg);
+  animation: scrollBounce 1.8s ease infinite;
+}
+@keyframes scrollBounce {
+  0%,100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+  50%      { transform: rotate(45deg) translateY(5px); opacity: .4; }
+}
+
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   SECTION CHROME
+   ============================================================ */
+.section-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--teal-glow);
+  border: 1px solid rgba(0,194,168,.2);
+  color: var(--teal);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 100px;
+  margin-bottom: 14px;
+}
+[data-theme="dark"] .section-tag { color: var(--teal-light); }
+
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: 700; color: var(--text);
+  line-height: 1.18; letter-spacing: -.4px;
+  margin-bottom: 14px;
+}
+.section-sub {
+  color: var(--text-2);
+  font-size: 15.5px; line-height: 1.68;
+  max-width: 500px; margin: 0 auto;
+}
+.section-header { text-align: center; margin-bottom: 52px; }
+
+/* ============================================================
+   COURSES SECTION
+   ============================================================ */
+.courses-section {
+  padding: 96px 5%;
+  max-width: 1320px; margin: 0 auto;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  gap: 22px;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  opacity: 0; transform: translateY(28px);
+  cursor: pointer;
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--teal-glow), var(--electric-glow));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.card:hover::before { opacity: 1; }
+.card.visible {
+  opacity: 1; transform: none;
+  transition: opacity .55s ease, transform .55s ease,
+              box-shadow var(--transition), border-color var(--transition);
+}
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(0,194,168,.15);
+  border-color: rgba(0,194,168,.25);
+}
+
+/* Thumbnail */
+.card-thumb {
+  position: relative; height: 188px; overflow: hidden;
+  z-index: 1;
+}
+.card-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .7s cubic-bezier(.4,0,.2,1);
+}
+.card:hover .card-thumb img { transform: scale(1.06); }
+
+.thumb-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5,7,15,.72) 0%, rgba(5,7,15,.1) 60%, transparent 100%);
+}
+.thumb-badge {
+  position: absolute; top: 14px; left: 14px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.2);
+  color: white; font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 8px;
+  letter-spacing: .4px; text-transform: uppercase;
+}
+.thumb-count {
+  position: absolute; bottom: 14px; right: 14px;
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.thumb-count .big-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700; color: white;
+  line-height: 1; letter-spacing: -1px;
+}
+.thumb-count .small-label {
+  font-size: 10px; color: rgba(255,255,255,.55);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* Part color accent strip */
+.card-accent {
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--electric));
+  z-index: 1; position: relative;
+}
+.card:nth-child(1) .card-accent { background: linear-gradient(90deg, #00c2a8, #00e5c8); }
+.card:nth-child(2) .card-accent { background: linear-gradient(90deg, #4f8bff, #7dd3fc); }
+.card:nth-child(3) .card-accent { background: linear-gradient(90deg, #f5a623, #fb923c); }
+.card:nth-child(4) .card-accent { background: linear-gradient(90deg, #ff5f7e, #f472b6); }
+
+/* Card body */
+.card-body {
+  padding: 22px 24px 24px;
+  position: relative; z-index: 1;
+}
+
+.card-part-label {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 8px;
+}
+[data-theme="dark"] .card-part-label { color: var(--teal-light); }
+.card:nth-child(2) .card-part-label { color: var(--electric); }
+.card:nth-child(3) .card-part-label { color: var(--gold); }
+.card:nth-child(4) .card-part-label { color: var(--rose); }
+
+.card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 600;
+  color: var(--text); margin-bottom: 9px; line-height: 1.3;
+}
+.card-desc {
+  font-size: 13.5px; color: var(--text-2);
+  line-height: 1.65; margin-bottom: 20px;
+}
+
+.card-meta {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+}
+.meta-chip {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-3); font-weight: 500;
+}
+.meta-chip svg { width: 14px; height: 14px; }
+
+/* Card CTA */
+.btn-card {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px;
+  border-radius: 13px;
+  background: var(--surface-2);
+  color: var(--text); font-weight: 600; font-size: 14px;
+  text-decoration: none;
+  border: 1.5px solid var(--border);
+  transition: all var(--transition);
+}
+.btn-card:hover {
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  color: white; border-color: transparent;
+  box-shadow: var(--shadow-teal);
+  transform: scale(1.01);
+}
+.btn-card svg { width: 15px; height: 15px; transition: transform .3s; }
+.btn-card:hover svg { transform: translateX(3px); }
+
+/* Part-specific hover colors */
+.card:nth-child(2) .btn-card:hover {
+  background: linear-gradient(135deg, var(--electric), #7dd3fc);
+  box-shadow: var(--shadow-elec);
+}
+.card:nth-child(3) .btn-card:hover {
+  background: linear-gradient(135deg, var(--gold), #fb923c);
+  box-shadow: 0 8px 32px rgba(245,166,35,.3);
+}
+.card:nth-child(4) .btn-card:hover {
+  background: linear-gradient(135deg, var(--rose), #f472b6);
+  box-shadow: 0 8px 32px rgba(255,95,126,.3);
+}
+
+/* ============================================================
+   SPECIAL "THI THẬT" CARD
+   ============================================================ */
+.card-special {
+  grid-column: 1 / -1;
+  background: var(--ink);
+  border: none;
+  border-radius: var(--radius-lg);
+  position: relative; overflow: hidden;
+  opacity: 0; transform: translateY(28px);
+  cursor: default;
+  box-shadow: none;
+}
+.card-special::before { display: none; }
+.card-special.visible { opacity: 1; transform: none; }
+.card-special:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+/* Animated border glow */
+.special-border {
+  position: absolute; inset: -2px; border-radius: calc(var(--radius-lg) + 2px);
+  background: conic-gradient(from 0deg,
+    var(--teal) 0%, var(--electric) 25%,
+    var(--gold) 50%, var(--rose) 75%, var(--teal) 100%);
+  z-index: -1;
+  animation: rotateBorder 5s linear infinite;
+}
+@keyframes rotateBorder {
+  to { transform: rotate(360deg); }
+}
+
+.special-inner-wrap {
+  position: absolute; inset: 2px;
+  background: linear-gradient(135deg, #08091c 0%, #0f1530 50%, #0a1a3a 100%);
+  border-radius: calc(var(--radius-lg) - 1px);
+  overflow: hidden;
+}
+
+/* Grid texture */
+.special-inner-wrap::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Orbs inside special card */
+.special-orb {
+  position: absolute; border-radius: 50%; filter: blur(50px); pointer-events: none;
+}
+.special-orb-1 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(0,194,168,.2), transparent 70%);
+  top: -80px; right: 10%;
+}
+.special-orb-2 {
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(245,166,35,.15), transparent 70%);
+  bottom: -80px; left: 20%;
+}
+
+.card-special-content {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 48px;
+  padding: 48px 52px;
+}
+
+/* Icon */
+.special-icon {
+  flex-shrink: 0;
+  width: 110px; height: 110px; border-radius: 28px;
+  background: linear-gradient(135deg, rgba(245,166,35,.2), rgba(239,68,68,.15));
+  border: 1px solid rgba(245,166,35,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 54px;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  50%      { transform: scale(1.06) rotate(-3deg); }
+}
+
+.special-text { flex: 1; min-width: 0; }
+
+.special-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(245,166,35,.12);
+  border: 1px solid rgba(245,166,35,.25);
+  color: #fcd34d;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 14px; border-radius: 100px;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #fcd34d;
+  animation: blink 1.5s ease infinite;
+}
+
+.special-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+  font-weight: 700; color: white; line-height: 1.15;
+  letter-spacing: -.5px; margin-bottom: 12px;
+}
+.special-title .gold-grad {
+  background: linear-gradient(90deg, #fcd34d, #fb923c);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.special-desc {
+  color: rgba(255,255,255,.58);
+  font-size: 15px; line-height: 1.7;
+  margin-bottom: 26px; max-width: 500px;
+}
+
+.special-chips {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px;
+}
+.s-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.75);
+  font-size: 13px; font-weight: 500;
+  padding: 7px 14px; border-radius: 10px;
+  transition: all var(--transition);
+}
+.s-chip:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(0,194,168,.3);
+  color: white;
+}
+
+.btn-fire {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 34px; border-radius: 14px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white; font-weight: 700; font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 8px 32px rgba(245,158,11,.4);
+  transition: all var(--transition-bounce);
+  letter-spacing: .2px;
+}
+.btn-fire:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(245,158,11,.55);
+}
+.btn-fire svg { width: 18px; height: 18px; }
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+.how-section {
+  padding: 96px 5%;
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.how-inner { max-width: 1200px; margin: 0 auto; }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 22px;
+  position: relative;
+}
+
+/* Connector line (desktop) */
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 60px; left: calc(12.5% + 26px); right: calc(12.5% + 26px);
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--teal) 0, var(--teal) 12px, transparent 12px, transparent 24px);
+  opacity: .2;
+  display: none;
+}
+
+.step {
+  background: var(--step-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 34px 24px 28px;
+  text-align: center;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  opacity: 0; transform: translateY(22px);
+  position: relative;
+}
+.step.visible {
+  opacity: 1; transform: none;
+  transition: opacity .5s ease, transform .5s ease,
+              box-shadow var(--transition), border-color var(--transition);
+}
+.step:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(0,194,168,.2);
+  border-color: rgba(0,194,168,.25);
+}
+
+.step-num {
+  width: 54px; height: 54px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700; color: white;
+  box-shadow: 0 6px 20px rgba(0,194,168,.3);
+  transition: transform var(--transition-bounce);
+}
+.step:hover .step-num { transform: scale(1.12) rotate(-5deg); }
+
+.step h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600; color: var(--text);
+  margin-bottom: 9px;
+}
+.step p { font-size: 13.5px; color: var(--text-2); line-height: 1.62; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--ink);
+  padding: 44px 5%;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+/* Gradient top line */
+footer::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--electric), var(--gold), var(--rose), var(--teal));
+  background-size: 300% auto;
+  animation: rainbowSlide 4s linear infinite;
+}
+@keyframes rainbowSlide { to { background-position: 300% center; } }
+
+.footer-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 700; color: white;
+  margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.footer-logo .f-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal);
+  display: inline-block;
+}
+.footer-sub {
+  color: rgba(255,255,255,.38);
+  font-size: 13px; margin-bottom: 6px;
+}
+.footer-copy { color: rgba(255,255,255,.28); font-size: 12px; }
+
+/* ============================================================
+   SCROLL TO TOP
+   ============================================================ */
+#scrollTop {
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  width: 46px; height: 46px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--teal), var(--electric));
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  box-shadow: 0 6px 24px rgba(0,194,168,.4);
+  opacity: 0; pointer-events: none;
+  transform: translateY(14px);
+  transition: all var(--transition-bounce);
+}
+#scrollTop.show { opacity: 1; pointer-events: all; transform: none; }
+#scrollTop:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,194,168,.55); }
+
+/* ============================================================
+   ANIMATIONS — stagger
+   ============================================================ */
+.card:nth-child(1) { transition-delay: .04s; }
+.card:nth-child(2) { transition-delay: .10s; }
+.card:nth-child(3) { transition-delay: .16s; }
+.card:nth-child(4) { transition-delay: .22s; }
+.card:nth-child(5) { transition-delay: .30s; }
+.step:nth-child(1) { transition-delay: .04s; }
+.step:nth-child(2) { transition-delay: .10s; }
+.step:nth-child(3) { transition-delay: .16s; }
+.step:nth-child(4) { transition-delay: .22s; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .card-special-content { flex-direction: column; padding: 36px 28px; gap: 28px; }
+  .special-icon { width: 88px; height: 88px; font-size: 42px; }
+}
+@media (max-width: 768px) {
+  .nav-links, .btn-cta { display: none; }
+  .hamburger { display: flex; }
+  .courses-grid { grid-template-columns: 1fr; }
+  .card-special { grid-column: auto; }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .btn-primary, .btn-outline { text-align: center; justify-content: center; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .hstat-divider { display: none; }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOADER ===================== -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-brand">
+    <div class="loader-icon">📚</div>
+    <div class="loader-name">Báo Cáo <span>Viên</span></div>
+  </div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+</div>
+
+<!-- ===================== MOBILE NAV ===================== -->
+<div class="mobile-nav" id="mobileNav" role="navigation" aria-label="Menu di động">
+  <a href="#" onclick="closeMobileNav()">Trang chủ</a>
+  <a href="#de-thi" onclick="closeMobileNav()">Đề thi</a>
+  <a href="#huong-dan" onclick="closeMobileNav()">Hướng dẫn</a>
+  <a href="https://dauquangvu.github.io/thi-that-1/" target="_blank" rel="noopener" onclick="closeMobileNav()" style="color:var(--teal)">🔥 Thi Thật</a>
+</div>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav id="navbar" role="banner">
+  <a href="#" class="nav-logo" aria-label="Trang chủ">
+    <div class="logo-mark">📚</div>
+    <div class="logo-text">
+      Báo Cáo Viên
+      <small>Ôn luyện trắc nghiệm</small>
+    </div>
+  </a>
+
+  <ul class="nav-links" role="list">
+    <li><a href="#">Trang chủ</a></li>
+    <li><a href="#de-thi">Đề thi</a></li>
+    <li><a href="#huong-dan">Hướng dẫn</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <button class="dark-toggle" id="darkToggle" title="Chuyển giao diện sáng / tối" aria-label="Chuyển giao diện">🌙</button>
+    <a href="https://dauquangvu.github.io/thi-that-1/" target="_blank" rel="noopener" class="btn-cta">
+      🔥 Thi Thật
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Mở menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" aria-labelledby="hero-heading">
+  <!-- Background layers -->
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-pill" aria-label="Hệ thống ôn thi chuyên nghiệp">
+      <div class="pill-dot" aria-hidden="true"></div>
+      Hệ thống ôn thi chuyên nghiệp
+    </div>
+
+    <h1 id="hero-heading">
+      Ôn Thi Trắc Nghiệm<br>
+      <span class="grad-text">Báo Cáo Viên</span>
+    </h1>
+
+    <p>
+      Luyện đề chuyên sâu với <strong>200+ câu hỏi</strong> chọn lọc kỹ càng,
+      phân chia theo từng phần rõ ràng.
+      Tự tin bước vào phòng thi với kết quả tốt nhất.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#de-thi" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg>
+        Bắt đầu ôn thi
+      </a>
+      <a href="https://dauquangvu.github.io/thi-that-1/" target="_blank" rel="noopener" class="btn-outline">
+        🔥 Thi Thật ngay
+      </a>
+    </div>
+
+    <div class="hero-stats" aria-label="Thống kê">
+      <div class="hstat">
+        <div class="hstat-num">200<span>+</span></div>
+        <div class="hstat-label">Câu hỏi</div>
+      </div>
+      <div class="hstat-divider" aria-hidden="true"></div>
+      <div class="hstat">
+        <div class="hstat-num">4</div>
+        <div class="hstat-label">Phần ôn thi</div>
+      </div>
+      <div class="hstat-divider" aria-hidden="true"></div>
+      <div class="hstat">
+        <div class="hstat-num">50</div>
+        <div class="hstat-label">Câu thi thật</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <span style="font-size:10px;letter-spacing:2px">Cuộn xuống</span>
+    <div class="scroll-chevron"></div>
+  </div>
+</section>
+
+<!-- ===================== COURSES ===================== -->
+<section class="courses-section" id="de-thi" aria-labelledby="courses-heading">
+  <div class="section-header">
+    <div class="section-tag">📋 Đề thi theo phần</div>
+    <h2 class="section-title" id="courses-heading">Chọn phần ôn luyện của bạn</h2>
+    <p class="section-sub">Mỗi phần gồm 50 câu hỏi được chọn lọc kỹ càng, bám sát nội dung thi thực tế.</p>
+  </div>
+
+  <div class="courses-grid">
+
+    <!-- Card 1 -->
+    <article class="card" aria-label="Đề trắc nghiệm phần 1">
+      <div class="card-thumb">
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" alt="Phần 1 – Nền tảng" loading="lazy">
+        <div class="thumb-overlay" aria-hidden="true"></div>
+        <div class="thumb-badge">Phần 1</div>
+        <div class="thumb-count">
+          <span class="big-num">50</span>
+          <span class="small-label">câu hỏi</span>
+        </div>
+      </div>
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-part-label">⬡ Nền tảng</div>
+        <h3 class="card-title">Đề Trắc Nghiệm Phần 1</h3>
+        <p class="card-desc">Ôn luyện từ câu 1 – 50, bao gồm các kiến thức nền tảng và cơ bản nhất.</p>
+        <div class="card-meta">
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            50 câu
+          </span>
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+            ~30 phút
+          </span>
+        </div>
+        <a href="https://dauquangvu.github.io/trac-nghiem/" target="_blank" rel="noopener" class="btn-card">
+          Làm bài ngay
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="card" aria-label="Đề trắc nghiệm phần 2">
+      <div class="card-thumb">
+        <img src="https://images.pexels.com/photos/15102004/pexels-photo-15102004.jpeg?w=800" alt="Phần 2 – Nâng cao" loading="lazy">
+        <div class="thumb-overlay" aria-hidden="true"></div>
+        <div class="thumb-badge">Phần 2</div>
+        <div class="thumb-count">
+          <span class="big-num">50</span>
+          <span class="small-label">câu hỏi</span>
+        </div>
+      </div>
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-part-label">⬡ Nâng cao</div>
+        <h3 class="card-title">Đề Trắc Nghiệm Phần 2</h3>
+        <p class="card-desc">Ôn luyện từ câu 51 – 100, đi sâu hơn vào các nội dung trọng tâm.</p>
+        <div class="card-meta">
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            50 câu
+          </span>
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+            ~30 phút
+          </span>
+        </div>
+        <a href="https://dauquangvu.github.io/trac-nghiem-phan-2/" target="_blank" rel="noopener" class="btn-card">
+          Làm bài ngay
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="card" aria-label="Đề trắc nghiệm phần 3">
+      <div class="card-thumb">
+        <img src="https://images.pexels.com/photos/1427541/pexels-photo-1427541.jpeg?w=800" alt="Phần 3 – Chuyên sâu" loading="lazy">
+        <div class="thumb-overlay" aria-hidden="true"></div>
+        <div class="thumb-badge">Phần 3</div>
+        <div class="thumb-count">
+          <span class="big-num">50</span>
+          <span class="small-label">câu hỏi</span>
+        </div>
+      </div>
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-part-label">⬡ Chuyên sâu</div>
+        <h3 class="card-title">Đề Trắc Nghiệm Phần 3</h3>
+        <p class="card-desc">Ôn luyện từ câu 101 – 150, tập trung vào những kiến thức chuyên sâu.</p>
+        <div class="card-meta">
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            50 câu
+          </span>
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+            ~30 phút
+          </span>
+        </div>
+        <a href="https://dauquangvu.github.io/trac-nghiem-phan-3/" target="_blank" rel="noopener" class="btn-card">
+          Làm bài ngay
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="card" aria-label="Đề trắc nghiệm phần 4">
+      <div class="card-thumb">
+        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?w=800" alt="Phần 4 – Tổng ôn" loading="lazy">
+        <div class="thumb-overlay" aria-hidden="true"></div>
+        <div class="thumb-badge">Phần 4</div>
+        <div class="thumb-count">
+          <span class="big-num">50</span>
+          <span class="small-label">câu hỏi</span>
+        </div>
+      </div>
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-part-label">⬡ Tổng ôn</div>
+        <h3 class="card-title">Đề Trắc Nghiệm Phần 4</h3>
+        <p class="card-desc">Ôn luyện từ câu 151 – 200, hoàn thiện toàn bộ kiến thức trước kỳ thi.</p>
+        <div class="card-meta">
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            50 câu
+          </span>
+          <span class="meta-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+            ~30 phút
+          </span>
+        </div>
+        <a href="https://dauquangvu.github.io/trac-nghiem-phan-4/" target="_blank" rel="noopener" class="btn-card">
+          Làm bài ngay
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <!-- Special "Thi Thật" card -->
+    <article class="card card-special" aria-label="Chế độ thi thật">
+      <!-- Animated border -->
+      <div class="special-border" aria-hidden="true"></div>
+      <!-- Inner container with dark bg + texture -->
+      <div class="special-inner-wrap" aria-hidden="true">
+        <div class="special-orb special-orb-1"></div>
+        <div class="special-orb special-orb-2"></div>
+      </div>
+      <!-- Actual content -->
+      <div class="card-special-content">
+        <div class="special-icon" aria-hidden="true">🔥</div>
+        <div class="special-text">
+          <div class="special-eyebrow">
+            <div class="live-dot" aria-hidden="true"></div>
+            Chế độ thi thật
+          </div>
+          <h3 class="special-title">
+            THI THẬT –<br>
+            <span class="gold-grad">Sẵn sàng chinh phục?</span>
+          </h3>
+          <p class="special-desc">
+            50 câu hỏi ngẫu nhiên tổng hợp từ toàn bộ đề ôn luyện.
+            Thời gian thực, không hỗ trợ, đúng như phòng thi. Kiểm tra thực lực ngay!
+          </p>
+          <div class="special-chips">
+            <div class="s-chip">🎲 50 câu ngẫu nhiên</div>
+            <div class="s-chip">⏱️ Có tính giờ</div>
+            <div class="s-chip">📊 Kết quả chi tiết</div>
+            <div class="s-chip">🔄 Mỗi lần khác nhau</div>
+          </div>
+          <a href="https://dauquangvu.github.io/thi-that-1/" target="_blank" rel="noopener" class="btn-fire">
+            🚀 BẮT ĐẦU THI NGAY
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="how-section" id="huong-dan" aria-labelledby="how-heading">
+  <div class="how-inner">
+    <div class="section-header">
+      <div class="section-tag">⚡ Hướng dẫn</div>
+      <h2 class="section-title" id="how-heading">Chỉ 4 bước để sẵn sàng</h2>
+      <p class="section-sub">Đơn giản, nhanh chóng – bắt đầu ôn thi trong vòng 30 giây.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num" aria-hidden="true">1</div>
+        <h3>Chọn đề thi</h3>
+        <p>Chọn phần ôn luyện phù hợp với mức độ và nội dung bạn muốn ôn.</p>
+      </div>
+      <div class="step">
+        <div class="step-num" aria-hidden="true">2</div>
+        <h3>Làm bài</h3>
+        <p>Trả lời từng câu hỏi trắc nghiệm, hệ thống ghi nhận lựa chọn của bạn.</p>
+      </div>
+      <div class="step">
+        <div class="step-num" aria-hidden="true">3</div>
+        <h3>Xem kết quả</h3>
+        <p>Kiểm tra điểm số và xem đáp án chi tiết để rút kinh nghiệm.</p>
+      </div>
+      <div class="step">
+        <div class="step-num" aria-hidden="true">4</div>
+        <h3>Thi Thật</h3>
+        <p>Khi đã tự tin, bước vào chế độ Thi Thật để kiểm tra toàn diện thực lực.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer role="contentinfo">
+  <div class="footer-logo">
+    <span class="f-dot" aria-hidden="true"></span>
+    Ôn Thi Báo Cáo Viên
+  </div>
+  <p class="footer-sub">Tác giả: <strong style="color:rgba(255,255,255,.65)">Đậu Quang Vũ</strong> – CTV/c12/d3/e1</p>
+  <p class="footer-copy">© 2025 · Chúc bạn thi đạt kết quả cao! 🎯</p>
+</footer>
+
+<!-- ===================== SCROLL TO TOP ===================== -->
+<button id="scrollTop" aria-label="Cuộn lên đầu trang">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ====================================================
+   LOADER
+   ==================================================== */
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 800);
+});
+
+/* ====================================================
+   DARK MODE
+   ==================================================== */
+const toggle = document.getElementById('darkToggle');
+const html   = document.documentElement;
+let dark = localStorage.getItem('theme') === 'dark';
+
+function applyTheme() {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  toggle.textContent = dark ? '☀️' : '🌙';
+  toggle.setAttribute('title', dark ? 'Chuyển sang sáng' : 'Chuyển sang tối');
+}
+applyTheme();
+
+toggle.addEventListener('click', () => {
+  dark = !dark;
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  applyTheme();
+});
+
+/* ====================================================
+   NAVBAR SCROLL BEHAVIOUR
+   ==================================================== */
+const navbar     = document.getElementById('navbar');
+const scrollTopBtn = document.getElementById('scrollTop');
+
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+  scrollTopBtn.classList.toggle('show', window.scrollY > 380);
+}, { passive: true });
+
+/* ====================================================
+   SCROLL TO TOP
+   ==================================================== */
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ====================================================
+   MOBILE NAV
+   ==================================================== */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = mobileNav.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', String(isOpen));
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+function closeMobileNav() {
+  mobileNav.classList.remove('open');
+  hamburger.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileNav();
+});
+
+/* ====================================================
+   SCROLL-TRIGGERED REVEAL ANIMATIONS
+   ==================================================== */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target); // fire once
+    }
+  });
+}, {
+  threshold: 0.10,
+  rootMargin: '0px 0px -32px 0px'
+});
+
+document.querySelectorAll('.card, .step').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>
