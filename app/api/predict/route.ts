@@ -3,9 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { history, apiKey, model } = body
+    const { history } = body
 
-    if (!apiKey) return NextResponse.json({ error: 'Missing API key' }, { status: 400 })
+    const apiKey = process.env.ANTHROPIC_API_KEY
+    const model = process.env.MODEL || 'claude-3-5-haiku-20241022'
+
+    if (!apiKey) return NextResponse.json({ error: 'Missing API key in environment' }, { status: 500 })
     if (!history || history.length < 3) return NextResponse.json({ error: 'Need at least 3 colors' }, { status: 400 })
 
     const cR = history.filter((c: string) => c === 'red').length
@@ -30,7 +33,7 @@ Dự đoán màu TIẾP THEO. Trả lời JSON duy nhất, không thêm gì khá
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: model || 'claude-3-5-haiku-20241022',
+        model,
         max_tokens: 200,
         messages: [{ role: 'user', content: prompt }]
       })

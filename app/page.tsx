@@ -10,8 +10,6 @@ const CL: Record<string, { lbl: string; sh: string }> = {
 type Pred = { sequence: string[]; predicted: string | null; actual: string | null; confidence: number | null; reason: string }
 
 export default function Home() {
-  const [apiKey, setApiKey] = useState('')
-  const [model, setModel] = useState('claude-3-5-haiku-20241022')
   const [hist, setHist] = useState<string[]>([])
   const [preds, setPreds] = useState<Pred[]>([])
   const [thinking, setThinking] = useState(false)
@@ -49,26 +47,19 @@ export default function Home() {
   const predsRef  = useRef<Pred[]>([])
   const thinkingRef = useRef(false)
   const curPredIdxRef = useRef<number|null>(null)
-  const apiKeyRef = useRef('')
-  const modelRef  = useRef('claude-3-5-haiku-20241022')
   const thrRRef   = useRef(20), thrBRef = useRef(20), thrGRef = useRef(20)
 
   useEffect(() => { histRef.current = hist }, [hist])
   useEffect(() => { predsRef.current = preds }, [preds])
   useEffect(() => { thinkingRef.current = thinking }, [thinking])
-  useEffect(() => { apiKeyRef.current = apiKey }, [apiKey])
-  useEffect(() => { modelRef.current = model }, [model])
   useEffect(() => { thrRRef.current = thrR }, [thrR])
   useEffect(() => { thrBRef.current = thrB }, [thrB])
   useEffect(() => { thrGRef.current = thrG }, [thrG])
 
   useEffect(() => {
     const h = localStorage.getItem('cp4h'), p = localStorage.getItem('cp4p')
-    const k = localStorage.getItem('cp4key'), m = localStorage.getItem('cp4model')
     if (h) { const parsed = JSON.parse(h); setHist(parsed); histRef.current = parsed }
     if (p) { const parsed = JSON.parse(p); setPreds(parsed); predsRef.current = parsed }
-    if (k) { setApiKey(k); apiKeyRef.current = k }
-    if (m) { setModel(m); modelRef.current = m }
   }, [])
 
   const save = useCallback((h: string[], p: Pred[]) => {
@@ -86,7 +77,6 @@ export default function Home() {
   }, [])
 
   const predict = useCallback(async (currentHist: string[]) => {
-    if (!apiKeyRef.current) { setPredReason('⚠ Nhập API key.'); return }
     if (thinkingRef.current) return
     setThinking(true); thinkingRef.current = true
     setDot('th', 'Đang phân tích...')
@@ -104,7 +94,7 @@ export default function Home() {
       const res = await fetch('/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ history: currentHist, apiKey: apiKeyRef.current, model: modelRef.current })
+        body: JSON.stringify({ history: currentHist })
       })
       const data = await res.json()
       if (data.error) {
@@ -284,17 +274,6 @@ export default function Home() {
       </header>
 
       <aside className="bg-[#12121a] border-r border-white/5 overflow-y-auto flex flex-col gap-3 p-3">
-        <div>
-          <div className="text-[9px] uppercase tracking-widest text-white/30 mb-1.5">API Key</div>
-          <input className="w-full bg-[#1a1a26] border border-white/10 rounded-md px-2.5 py-1.5 text-[11px] outline-none focus:border-green-500/40 placeholder-white/20" type="password" value={apiKey}
-            onChange={e=>{setApiKey(e.target.value);localStorage.setItem('cp4key',e.target.value)}} placeholder="sk-ant-api03-..."/>
-        </div>
-        <div>
-          <div className="text-[9px] uppercase tracking-widest text-white/30 mb-1.5">Model</div>
-          <input className="w-full bg-[#1a1a26] border border-white/10 rounded-md px-2.5 py-1.5 text-[11px] outline-none focus:border-green-500/40" type="text" value={model}
-            onChange={e=>{setModel(e.target.value);localStorage.setItem('cp4model',e.target.value)}}/>
-          <div className="text-[9px] text-white/25 mt-1">Proxy: 1gw.gwai.cloud</div>
-        </div>
         <div>
           <div className="text-[9px] uppercase tracking-widest text-white/30 mb-1.5">Màn hình game</div>
           <button onClick={toggleCap} className={`w-full py-2.5 rounded-lg border font-bold text-[11px] tracking-wider transition-all ${capturing?'bg-red-500/15 text-red-400 border-red-500/30':'bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/25'}`}>
